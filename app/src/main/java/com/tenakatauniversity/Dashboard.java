@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.tenakatauniversity.databinding.DashboardFragmentBinding;
 
@@ -21,9 +22,18 @@ public class Dashboard extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         DashboardFragmentBinding binding = DashboardFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+        //navigate to the apply fragment when the apply button is touched
+        mViewModel.navigateToApplyFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
+            if (result != null && result) {
+                Toast.makeText(requireContext(), "Navigate to apply fragment", Toast.LENGTH_SHORT).show();
+                mViewModel.resetNavigateToApplyFragmentLiveData();
+            }
+        });
+       //navigate to the admissions fragment when the admission results button is touched
         mViewModel.navigateToAdmissionResultsFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
             if (result != null && result) {
-
+                Toast.makeText(requireContext(), "Navigate to admission results fragment", Toast.LENGTH_SHORT).show();
+                mViewModel.resetNavigateToAdmissionResultsFragmentLiveData();
             }
         });
         return binding.getRoot();
