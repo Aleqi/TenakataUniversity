@@ -9,5 +9,13 @@
         android:id="@+id/dashboard"
         android:name="com.tenakatauniversity.Dashboard"
         android:label="dashboard_fragment"
-        tools:layout="@layout/dashboard_fragment" />
+        tools:layout="@layout/dashboard_fragment" >
+        <action
+            android:id="@+id/action_dashboard_to_apply"
+            app:destination="@id/apply" />
+    </fragment>
+    <fragment
+        android:id="@+id/apply"
+        android:name="com.tenakatauniversity.apply.Apply"
+        android:label="Apply" />
 </navigation>
