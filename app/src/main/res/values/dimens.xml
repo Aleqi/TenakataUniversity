@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="dashboard_button_vertical_padding">20dp</dimen>
+    <dimen name="apply_major_top_margin">16dp</dimen>
+    <dimen name="apply_minor_top_margin">12dp</dimen>
+    <dimen name="apply_profile_picture_image_view_dimens">96dp</dimen>
 </resources>
