@@ -4,4 +4,5 @@
     <dimen name="apply_major_top_margin">16dp</dimen>
     <dimen name="apply_minor_top_margin">12dp</dimen>
     <dimen name="apply_profile_picture_image_view_dimens">100dp</dimen>
+    <dimen name="country_progress_bar_dimen">25dp</dimen>
 </resources>

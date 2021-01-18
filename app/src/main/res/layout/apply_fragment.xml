@@ -208,6 +208,14 @@
                     app:showView="@{viewModel.locationMutableLiveData!=null}"
                     />
 
+                <ProgressBar
+                    android:layout_width="@dimen/country_progress_bar_dimen"
+                    android:layout_height="@dimen/country_progress_bar_dimen"
+                    android:layout_marginTop="@dimen/apply_minor_top_margin"
+                    app:showView="@{viewModel.locationMutableLiveData==null}"
+
+                    />
+
                 <Button
                     android:id="@+id/apply_submit_button"
                     android:layout_width="wrap_content"

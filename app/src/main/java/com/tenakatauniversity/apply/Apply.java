@@ -135,6 +135,7 @@ public class Apply extends Fragment {
                     //initialize address list
                     List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     binding.countryValueTextView.setText(addressList.get(0).getCountryName());
+                    Timber.d("Country code: "+addressList.get(0).getCountryCode());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -175,6 +176,7 @@ public class Apply extends Fragment {
                             @Override
                             public void onLocationResult(LocationResult locationResult) {
                                 //initialize location
+                                Timber.d("on location result");
                                 Location location1 = locationResult.getLastLocation();
                                 viewModel.locationMutableLiveData.setValue(location1);
                             }
