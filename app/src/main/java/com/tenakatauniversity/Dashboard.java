@@ -28,7 +28,6 @@ public class Dashboard extends Fragment {
         binding.setLifecycleOwner(this);
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
         binding.setViewModel(mViewModel);
-//        binding.btApply.setOnClickListener (view -> mViewModel.navigateToApplyFragment());
         //navigate to the apply fragment when the apply button is touched
         mViewModel.getNavigateToApplyFragmentLiveData().observe(getViewLifecycleOwner(), result -> {
             Timber.d(getClass().getSimpleName(), "navigate to apply fragment");
