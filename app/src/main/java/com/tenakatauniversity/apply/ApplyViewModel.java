@@ -1,5 +1,7 @@
 package com.tenakatauniversity.apply;
 
+import android.location.Location;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,7 +18,6 @@ public class ApplyViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> takePictureLiveData = new MutableLiveData<>();
 
-
     public void validate() {
         validateFieldsLiveData.setValue(true);
     }
@@ -30,6 +31,8 @@ public class ApplyViewModel extends ViewModel {
             takePictureLiveData = new MutableLiveData<>();
         return takePictureLiveData;
     }
+
+    public MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
 
     public void takePicture() {
         takePictureLiveData.setValue(true);

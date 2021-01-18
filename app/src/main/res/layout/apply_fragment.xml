@@ -190,6 +190,23 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    android:id="@+id/country_title_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/apply_major_top_margin"
+                    android:text="@string/country"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                <TextView
+                    android:id="@+id/country_value_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/apply_minor_top_margin"
+                    android:text="@string/country"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    />
+
                 <Button
                     android:id="@+id/apply_submit_button"
                     android:layout_width="wrap_content"

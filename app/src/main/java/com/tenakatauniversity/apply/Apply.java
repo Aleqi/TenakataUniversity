@@ -1,27 +1,47 @@
 package com.tenakatauniversity.apply;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.tenakatauniversity.MainActivity;
 import com.tenakatauniversity.R;
 import com.tenakatauniversity.databinding.ApplyFragmentBinding;
 import com.tenakatauniversity.utility.Utility;
@@ -30,14 +50,18 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import timber.log.Timber;
 
 public class Apply extends Fragment {
 
     private ApplyViewModel viewModel;
     private ApplyFragmentBinding binding;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private String currentPhotoPath;
+
+    //launcher to handle camera permission request result
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -45,7 +69,22 @@ public class Apply extends Fragment {
                     dispatchTakePictureIntent();
                 } else {
                     //explain why the app needs the permission
-                    getCameraRationale().show();
+                    showCameraPermissionRationale();
+                }
+            });
+
+    //launcher to handle location permission request result
+    private final ActivityResultLauncher<String[]> requestLocationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
+                boolean status = true;
+                for (Map.Entry<String, Boolean> entry : permissions.entrySet()) {
+                    if (!entry.getValue())
+                        status = false;
+                }
+                if (status) {
+                    getLocation();
+                } else {
+                    Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -60,6 +99,9 @@ public class Apply extends Fragment {
                     binding.pictureImageView.setImageBitmap(imageBitmap);
                 }
             });
+    private String currentPhotoPath;
+    private LocationManager locationManager;
+    private FusedLocationProviderClient fusedLocationClient;
 
 
     @Override
@@ -70,7 +112,9 @@ public class Apply extends Fragment {
         Utility.updateFragmentTitle(this, R.string.enter_application_details);
         binding.setLifecycleOwner(this);
         binding.setViewModel(viewModel);
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        requestLocationPermission();
+//        getLastKnownLocation();
         viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate -> {
             if (validate != null && validate) {
                 this.validateFields();
@@ -84,8 +128,69 @@ public class Apply extends Fragment {
             }
         });
 
+        viewModel.locationMutableLiveData.observe(getViewLifecycleOwner(), location -> {
+            if (location != null) {
+                try {
+                    Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                    //initialize address list
+                    List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    binding.countryValueTextView.setText(addressList.get(0).getCountryName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
         return binding.getRoot();
     }
+
+    private void getLocation() {
+        Timber.d("get location");
+        locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        if ((ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                &&
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) {
+            Timber.d("permissions granted in get location");
+            //check condition
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                Timber.d("providers enabled");
+                //when location service is enabled, get last known location
+                fusedLocationClient.getLastLocation().addOnCompleteListener(requireActivity(), task -> {
+                    //initialize location
+                    Location location = task.getResult();
+                    if (location != null) {
+                        viewModel.locationMutableLiveData.setValue(location);
+                    } else {
+                        Timber.d("location is null");
+                        //location is null, initialize location request
+                        LocationRequest locationRequest = new LocationRequest()
+                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                .setInterval(2000)
+                                .setFastestInterval(2000)
+                                .setNumUpdates(1);
+                        //initialize location callback
+                        LocationCallback locationCallback = new LocationCallback() {
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                //initialize location
+                                Location location1 = locationResult.getLastLocation();
+                                viewModel.locationMutableLiveData.setValue(location1);
+                            }
+                        };
+                        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+                    }
+                });
+            } else {
+                //when location service is not enabled, open location setting
+                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        } else {
+            requestLocationPermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+        }
+    }
+
 
     /**
      * Validate the application input fields
@@ -245,15 +350,51 @@ public class Apply extends Fragment {
             dispatchTakePictureIntent();
         } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
             //explain to the user why the app needs the permission
-            getCameraRationale().show();
+            showCameraPermissionRationale();
         } else {
             // The registered ActivityResultCallback gets the result of this request.
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
     }
 
-    private Snackbar getCameraRationale() {
-        return Snackbar.make(binding.coordinatorLayout, R.string.camera_permission_rationale, Snackbar.LENGTH_SHORT);
+    private void requestLocationPermission() {
+        if ((ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED)
+                &&
+                (ContextCompat.checkSelfPermission(
+                        requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED)) {
+            // You can use the API that requires the permission.
+            getLocation();
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            //explain to the user why the app needs the permission
+            showLocationPermissionRationale();
+        } else {
+            // The registered ActivityResultCallback gets the result of this request.
+            requestLocationPermissionLauncher.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
+        }
+    }
+
+    private void showCameraPermissionRationale() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.camera_permission_request);
+        builder.setMessage(R.string.camera_permission_rationale);
+        builder.setPositiveButton(R.string.done, (dialogInterface, i) -> {
+        });
+        builder.show();
+    }
+
+    /**
+     * Show permission rationale if the user denies the location permission
+     */
+    private void showLocationPermissionRationale() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.location_permission_request);
+        builder.setMessage(R.string.location_permission_rationale);
+        builder.setPositiveButton(R.string.done, (dialogInterface, i) -> {
+        });
+        builder.show();
     }
 
 }
