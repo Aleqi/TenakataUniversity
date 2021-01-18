@@ -205,6 +205,7 @@
                     android:layout_marginTop="@dimen/apply_minor_top_margin"
                     android:text="@string/country"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:showView="@{viewModel.locationMutableLiveData!=null}"
                     />
 
                 <Button
