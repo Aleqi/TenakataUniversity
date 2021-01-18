@@ -4,6 +4,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,11 @@ public class Dashboard extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         DashboardFragmentBinding binding = DashboardFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+        mViewModel.navigateToAdmissionResultsFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
+            if (result != null && result) {
+
+            }
+        });
         return binding.getRoot();
     }
 
