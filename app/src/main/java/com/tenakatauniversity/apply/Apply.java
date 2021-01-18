@@ -1,17 +1,21 @@
 package com.tenakatauniversity.apply;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +26,41 @@ import com.tenakatauniversity.R;
 import com.tenakatauniversity.databinding.ApplyFragmentBinding;
 import com.tenakatauniversity.utility.Utility;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Apply extends Fragment {
 
     private ApplyViewModel viewModel;
     private ApplyFragmentBinding binding;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private String currentPhotoPath;
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    //take the picture
+                    dispatchTakePictureIntent();
+                } else {
+                    //explain why the app needs the permission
+                    getCameraRationale().show();
+                }
+            });
+
+    // Create this as a variable in your Fragment class
+    ActivityResultLauncher<Intent> cameraIntentLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                //handle the result image
+                Bundle extras = result.getData().getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                if (imageBitmap != null) {
+                    binding.pictureImageView.setImageBitmap(imageBitmap);
+                }
+            });
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -41,6 +75,12 @@ public class Apply extends Fragment {
             if (validate != null && validate) {
                 this.validateFields();
                 viewModel.resetValidateLiveData();
+            }
+        });
+
+        viewModel.getTakePictureLiveData().observe(getViewLifecycleOwner(), takePicture -> {
+            if (takePicture != null && takePicture) {
+                requestCameraPermission();
             }
         });
 
@@ -147,15 +187,73 @@ public class Apply extends Fragment {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             Intent.createChooser(takePictureIntent, getString(R.string.capture_your_profile_picture));
-            startActivity(takePictureIntent);
-            //handle image capture result
-            Bundle extras = takePictureIntent.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            binding.pictureImageView.setImageBitmap(imageBitmap);
+//            startActivity(takePictureIntent);
+            cameraIntentLauncher.launch(takePictureIntent);
         } catch (ActivityNotFoundException e) {
             // display error state to the user
-            Snackbar.make(binding.coordinatorLayout, R.string.camera_error, Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    /*private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                // display error state to the user
+                Snackbar.make(binding.coordinatorLayout, R.string.camera_error, Snackbar.LENGTH_SHORT).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(requireContext(),
+                        "com.tenakatauniversity.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                //handle image capture result
+                Bundle extras = takePictureIntent.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                binding.pictureImageView.setImageBitmap(imageBitmap);
+            }
+        }
+    }*/
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED) {
+            // You can use the API that requires the permission.
+            dispatchTakePictureIntent();
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            //explain to the user why the app needs the permission
+            getCameraRationale().show();
+        } else {
+            // The registered ActivityResultCallback gets the result of this request.
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private Snackbar getCameraRationale() {
+        return Snackbar.make(binding.coordinatorLayout, R.string.camera_permission_rationale, Snackbar.LENGTH_SHORT);
     }
 
 }

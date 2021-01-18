@@ -1,5 +1,6 @@
 package com.tenakatauniversity.apply;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -7,11 +8,14 @@ public class ApplyViewModel extends ViewModel {
 
     private MutableLiveData<Boolean> validateFieldsLiveData;
 
-    public MutableLiveData<Boolean> getValidateFieldsLiveData() {
+    public LiveData<Boolean> getValidateFieldsLiveData() {
         if (validateFieldsLiveData == null)
             validateFieldsLiveData = new MutableLiveData<>();
         return validateFieldsLiveData;
     }
+
+    private MutableLiveData<Boolean> takePictureLiveData = new MutableLiveData<>();
+
 
     public void validate() {
         validateFieldsLiveData.setValue(true);
@@ -21,5 +25,18 @@ public class ApplyViewModel extends ViewModel {
         validateFieldsLiveData.setValue(null);
     }
 
+    public LiveData<Boolean> getTakePictureLiveData() {
+        if (takePictureLiveData == null)
+            takePictureLiveData = new MutableLiveData<>();
+        return takePictureLiveData;
+    }
+
+    public void takePicture() {
+        takePictureLiveData.setValue(true);
+    }
+
+    public void resetTakePictureLiveData() {
+        takePictureLiveData.setValue(null);
+    }
 
 }
