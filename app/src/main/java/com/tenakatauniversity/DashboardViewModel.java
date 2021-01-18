@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel;
 
 public class DashboardViewModel extends ViewModel {
 
-    private final MutableLiveData<Boolean> _navigateToApplyFragmentLiveData = new MutableLiveData<>();
+    final MutableLiveData<Boolean> _navigateToApplyFragmentLiveData = new MutableLiveData<>();
 
     LiveData<Boolean> navigateToApplyFragmentLiveData;
 
-    private final MutableLiveData<Boolean> _navigateToAdmissionResultsFragmentLiveData = new MutableLiveData<>();
+    final MutableLiveData<Boolean> _navigateToAdmissionResultsFragmentLiveData = new MutableLiveData<>();
 
-    LiveData<Boolean> navigateToAdmissionResultsFragmentLiveData;
+    LiveData<Boolean> navigateToAdmissionResultsFragmentLiveData = _navigateToAdmissionResultsFragmentLiveData;
 
     public LiveData<Boolean> getNavigateToAdmissionResultsFragmentLiveData() {
         return _navigateToAdmissionResultsFragmentLiveData;

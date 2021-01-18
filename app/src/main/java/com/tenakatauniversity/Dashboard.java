@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.tenakatauniversity.databinding.DashboardFragmentBinding;
 
+import timber.log.Timber;
+
 public class Dashboard extends Fragment {
 
     private DashboardViewModel mViewModel;
@@ -21,17 +23,21 @@ public class Dashboard extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         DashboardFragmentBinding binding = DashboardFragmentBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(this);
         mViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+        Timber.d(getClass().getSimpleName(), "view created");
         //navigate to the apply fragment when the apply button is touched
-        mViewModel.navigateToApplyFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
+        mViewModel._navigateToApplyFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
+            Timber.d(getClass().getSimpleName(), "navigate to apply fragment");
             if (result != null && result) {
                 Toast.makeText(requireContext(), "Navigate to apply fragment", Toast.LENGTH_SHORT).show();
                 mViewModel.resetNavigateToApplyFragmentLiveData();
             }
         });
        //navigate to the admissions fragment when the admission results button is touched
-        mViewModel.navigateToAdmissionResultsFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
+        mViewModel._navigateToAdmissionResultsFragmentLiveData.observe(getViewLifecycleOwner(), result -> {
             if (result != null && result) {
+                Timber.d(getClass().getSimpleName(), "navigate to admission results fragment");
                 Toast.makeText(requireContext(), "Navigate to admission results fragment", Toast.LENGTH_SHORT).show();
                 mViewModel.resetNavigateToAdmissionResultsFragmentLiveData();
             }
