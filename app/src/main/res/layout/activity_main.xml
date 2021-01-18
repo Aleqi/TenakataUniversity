@@ -8,28 +8,4 @@
     android:layout_margin="20dp"
     >
 
-    <Button
-        android:id="@+id/bt_apply"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:text="@string/apply"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.4"
-        />
-
-    <Button
-        android:id="@+id/bt_admission_list"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:text="@string/admission_list"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bt_apply"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.1"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
