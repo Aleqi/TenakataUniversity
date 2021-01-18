@@ -125,7 +125,7 @@ public class Apply extends Fragment {
         }
         try {
             int iqTestResults = Integer.parseInt(iqString);
-            if (iqTestResults <= 0) {
+            if (iqTestResults <= 100) {
                 binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_invalid_error));
                 return false;
             } else {

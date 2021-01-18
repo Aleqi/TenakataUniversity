@@ -26,6 +26,6 @@
     <string name="height_error">Height is required</string>
     <string name="height_invalid_error">Height is invalid</string>
     <string name="iq_test_results_error">IQ test results are required</string>
-    <string name="iq_test_results_invalid_error">An IQ of above 100 is required</string>
+    <string name="iq_test_results_invalid_error">An IQ of at least 100 is required</string>
     <string name="submit">Submit</string>
 </resources>
