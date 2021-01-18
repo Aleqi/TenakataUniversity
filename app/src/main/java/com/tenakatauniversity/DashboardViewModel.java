@@ -8,11 +8,7 @@ public class DashboardViewModel extends ViewModel {
 
     final MutableLiveData<Boolean> _navigateToApplyFragmentLiveData = new MutableLiveData<>();
 
-    LiveData<Boolean> navigateToApplyFragmentLiveData;
-
     final MutableLiveData<Boolean> _navigateToAdmissionResultsFragmentLiveData = new MutableLiveData<>();
-
-    LiveData<Boolean> navigateToAdmissionResultsFragmentLiveData = _navigateToAdmissionResultsFragmentLiveData;
 
     public LiveData<Boolean> getNavigateToAdmissionResultsFragmentLiveData() {
         return _navigateToAdmissionResultsFragmentLiveData;
