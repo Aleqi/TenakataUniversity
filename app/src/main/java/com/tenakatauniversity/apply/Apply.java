@@ -32,7 +32,7 @@ public class Apply extends Fragment {
         binding.setLifecycleOwner(this);
         binding.setViewModel(viewModel);
 
-        viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate->{
+        viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate -> {
             if (validate != null && validate) {
                 this.validateFields();
                 viewModel.resetValidateLiveData();
@@ -44,7 +44,7 @@ public class Apply extends Fragment {
 
     /**
      * Validate the application input fields
-     * */
+     */
     public boolean validateFields() {
 
         //validate name
@@ -52,6 +52,8 @@ public class Apply extends Fragment {
         if (name == null || name.isEmpty()) {
             binding.nameTextInputLayout.setError(getString(R.string.name_error));
             return false;
+        } else {
+            binding.nameTextInputLayout.setError("");
         }
 
         //validate age
@@ -59,17 +61,23 @@ public class Apply extends Fragment {
         if (ageString == null || ageString.isEmpty()) {
             binding.ageTextInputLayout.setError(getString(R.string.age_error));
             return false;
+        } else {
+            binding.ageTextInputLayout.setError("");
         }
+
         try {
             int age = Integer.parseInt(ageString);
             if (age <= 0) {
                 binding.ageTextInputLayout.setError(getString(R.string.age_invalid_error));
                 return false;
+            } else {
+                binding.ageTextInputLayout.setError("");
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
             binding.ageTextInputLayout.setError(getString(R.string.age_invalid_error));
-            return false;}
+            return false;
+        }
 
         // validate gender
         if (!binding.maleRadioButton.isChecked() && !binding.femaleRadioButton.isChecked()) {
@@ -89,11 +97,16 @@ public class Apply extends Fragment {
             binding.heightTextInputLayout.setError(getString(R.string.height_error));
             return false;
         }
+        else {
+            binding.heightTextInputLayout.setError("");
+        }
         try {
             int height = Integer.parseInt(heightString);
             if (height <= 0) {
                 binding.heightTextInputLayout.setError(getString(R.string.height_invalid_error));
                 return false;
+            } else {
+                binding.heightTextInputLayout.setError("");
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -107,12 +120,18 @@ public class Apply extends Fragment {
             binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_error));
             return false;
         }
+        else {
+            binding.iqTestResultsTextInputLayout.setError("");
+        }
         try {
             int iqTestResults = Integer.parseInt(iqString);
             if (iqTestResults <= 0) {
                 binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_invalid_error));
                 return false;
-            } } catch (NumberFormatException e) {
+            } else {
+                binding.iqTestResultsTextInputLayout.setError("");
+            }
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_invalid_error));
             return false;
