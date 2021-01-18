@@ -109,7 +109,7 @@ public class Apply extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = ApplyFragmentBinding.inflate(inflater, container, false);
-        viewModel = new ViewModelProvider(this).get(ApplyViewModel.class);
+        viewModel = new ViewModelProvider(this, new ApplyViewModelFactory(requireActivity().getApplication())).get(ApplyViewModel.class);
         Utility.updateFragmentTitle(this, R.string.enter_application_details);
         binding.setLifecycleOwner(this);
         binding.setViewModel(viewModel);
@@ -154,7 +154,7 @@ public class Apply extends Fragment {
                 int iqTestResults = Integer.parseInt(binding.iqTestResultsTextInputLayout.getEditText().getText().toString().trim());
                 String country = viewModel.getCountry(requireContext());
                 StudentApplication studentApplication = new StudentApplication(name, age, gender, maritalStatus, height, iqTestResults, country);
-
+                viewModel.insertStudentApplication(studentApplication);
             }
         });
 
@@ -185,7 +185,7 @@ public class Apply extends Fragment {
                                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                                 .setInterval(10000)
                                 .setFastestInterval(2000)
-                                .setNumUpdates(10);
+                                .setNumUpdates(1);
                         //initialize location callback
                         LocationCallback locationCallback = new LocationCallback() {
                             @Override

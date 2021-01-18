@@ -14,7 +14,7 @@ public class StudentApplicationRepository {
 
     public StudentApplicationRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
-        studentApplicationDao = appDatabase.studentApplicationDao;
+        studentApplicationDao = appDatabase.studentApplicationDao();
         studentApplicationsLiveData = studentApplicationDao.getAllLiveData();
     }
 
