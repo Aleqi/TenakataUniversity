@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Tenakata University</string>
     <string name="apply">Apply</string>
-    <string name="admission_list">Admission List</string>
+    <string name="admission_results">Admission Results</string>
 </resources>
