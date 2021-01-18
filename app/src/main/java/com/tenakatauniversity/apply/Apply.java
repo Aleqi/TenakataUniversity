@@ -44,6 +44,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.tenakatauniversity.MainActivity;
 import com.tenakatauniversity.R;
 import com.tenakatauniversity.databinding.ApplyFragmentBinding;
+import com.tenakatauniversity.studentapplication.StudentApplication;
 import com.tenakatauniversity.utility.Utility;
 
 import java.io.File;
@@ -114,11 +115,11 @@ public class Apply extends Fragment {
         binding.setViewModel(viewModel);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         requestLocationPermission();
-//        getLastKnownLocation();
         viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate -> {
             if (validate != null && validate) {
                 this.validateFields();
                 viewModel.resetValidateLiveData();
+                viewModel.submitData();
             }
         });
 
@@ -139,6 +140,20 @@ public class Apply extends Fragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+            }
+        });
+
+        viewModel.getSubmitDataLiveData().observe(getViewLifecycleOwner(), result -> {
+            if (result != null && result) {
+                String name = binding.nameTextInputLayout.getEditText().getText().toString().trim();
+                int age = Integer.parseInt(binding.ageTextInputLayout.getEditText().getText().toString().trim());
+                String gender = binding.maleRadioButton.isChecked() ? "male" : "female";
+                String maritalStatus = binding.singleRadioButton.isChecked() ? "single" : "married";
+                double height = Integer.parseInt(binding.heightTextInputLayout.getEditText().getText().toString().trim());
+                int iqTestResults = Integer.parseInt(binding.iqTestResultsTextInputLayout.getEditText().getText().toString().trim());
+                String country = viewModel.getCountry(requireContext());
+                StudentApplication studentApplication = new StudentApplication(name, age, gender, maritalStatus, height, iqTestResults, country);
 
             }
         });
@@ -168,9 +183,9 @@ public class Apply extends Fragment {
                         //location is null, initialize location request
                         LocationRequest locationRequest = new LocationRequest()
                                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                .setInterval(2000)
+                                .setInterval(10000)
                                 .setFastestInterval(2000)
-                                .setNumUpdates(1);
+                                .setNumUpdates(10);
                         //initialize location callback
                         LocationCallback locationCallback = new LocationCallback() {
                             @Override
