@@ -1,5 +1,8 @@
 package com.tenakatauniversity.apply;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +26,7 @@ public class Apply extends Fragment {
 
     private ApplyViewModel viewModel;
     private ApplyFragmentBinding binding;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -96,8 +101,7 @@ public class Apply extends Fragment {
         if (heightString == null || heightString.isEmpty()) {
             binding.heightTextInputLayout.setError(getString(R.string.height_error));
             return false;
-        }
-        else {
+        } else {
             binding.heightTextInputLayout.setError("");
         }
         try {
@@ -119,8 +123,7 @@ public class Apply extends Fragment {
         if (iqString == null || iqString.isEmpty()) {
             binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_error));
             return false;
-        }
-        else {
+        } else {
             binding.iqTestResultsTextInputLayout.setError("");
         }
         try {
@@ -138,6 +141,21 @@ public class Apply extends Fragment {
         }
 
         return true;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            Intent.createChooser(takePictureIntent, getString(R.string.capture_your_profile_picture));
+            startActivity(takePictureIntent);
+            //handle image capture result
+            Bundle extras = takePictureIntent.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            binding.pictureImageView.setImageBitmap(imageBitmap);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
+            Snackbar.make(binding.coordinatorLayout, R.string.camera_error, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 }

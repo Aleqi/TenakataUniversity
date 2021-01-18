@@ -28,4 +28,6 @@
     <string name="iq_test_results_error">IQ test results are required</string>
     <string name="iq_test_results_invalid_error">An IQ of at least 100 is required</string>
     <string name="submit">Submit</string>
+    <string name="capture_your_profile_picture">Capture your profile picture</string>
+    <string name="camera_error">\"The app cannot access the camera in your device\"</string>
 </resources>
