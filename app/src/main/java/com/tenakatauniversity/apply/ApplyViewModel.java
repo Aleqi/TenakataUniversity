@@ -13,5 +13,13 @@ public class ApplyViewModel extends ViewModel {
         return validateFieldsLiveData;
     }
 
+    public void validate() {
+        validateFieldsLiveData.setValue(true);
+    }
+
+    public void resetValidateLiveData() {
+        validateFieldsLiveData.setValue(null);
+    }
+
 
 }

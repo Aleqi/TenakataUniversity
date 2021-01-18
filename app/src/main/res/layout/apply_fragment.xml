@@ -192,11 +192,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/submit"
-                    android:layout_gravity="end"
-                    android:paddingHorizontal="50dp"
-                    android:paddingVertical="20dp"
+                    android:onClick="@{()->viewModel.validate()}"
+                    android:layout_gravity="bottom|end"
+                    android:paddingHorizontal="60dp"
+                    android:paddingVertical="15dp"
                     android:layout_marginTop="@dimen/apply_major_top_margin"
-                    android:layout_margin="8dp"
                     />
 
             </LinearLayout>

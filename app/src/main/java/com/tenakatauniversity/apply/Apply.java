@@ -32,6 +32,13 @@ public class Apply extends Fragment {
         binding.setLifecycleOwner(this);
         binding.setViewModel(viewModel);
 
+        viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate->{
+            if (validate != null && validate) {
+                this.validateFields();
+                viewModel.resetValidateLiveData();
+            }
+        });
+
         return binding.getRoot();
     }
 
