@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -41,12 +42,16 @@ import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tenakatauniversity.MainActivity;
 import com.tenakatauniversity.R;
 import com.tenakatauniversity.databinding.ApplyFragmentBinding;
 import com.tenakatauniversity.studentapplication.StudentApplication;
 import com.tenakatauniversity.utility.Utility;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -154,7 +159,7 @@ public class Apply extends Fragment {
                 int iqTestResults = Integer.parseInt(binding.iqTestResultsTextInputLayout.getEditText().getText().toString().trim());
                 String country = viewModel.getCountry(requireContext());
                 StudentApplication studentApplication = new StudentApplication(name, age, gender, maritalStatus, height, iqTestResults, country);
-                viewModel.insertStudentApplication(studentApplication);
+                uploadImage(studentApplication);
             }
         });
 
@@ -412,6 +417,28 @@ public class Apply extends Fragment {
         builder.setPositiveButton(R.string.done, (dialogInterface, i) -> {
         });
         builder.show();
+    }
+
+    public void uploadImage(StudentApplication studentApplication) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference pictureRef = storageRef.child("pictures/picture.jpg");
+        binding.pictureImageView.setDrawingCacheEnabled(true);
+        binding.pictureImageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) binding.pictureImageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = pictureRef.putBytes(data);
+        uploadTask.addOnFailureListener(exception -> {
+            // Handle unsuccessful uploads
+            Toast.makeText(requireContext(), "Image upload failure", Toast.LENGTH_SHORT).show();
+        }).addOnSuccessListener(taskSnapshot -> {
+            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+            Toast.makeText(requireContext(), "Picture uploaded: "+storageRef.getDownloadUrl(), Toast.LENGTH_SHORT).show();
+            studentApplication.pictureUrl = storageRef.getDownloadUrl().toString();
+            viewModel.insertStudentApplication(studentApplication);
+        });
     }
 
 }

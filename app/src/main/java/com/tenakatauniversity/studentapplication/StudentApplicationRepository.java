@@ -40,7 +40,7 @@ public class StudentApplicationRepository {
     }
 
     public void insertStudentApplicationToRemoteServer(StudentApplication studentApplication) {
-        Call<List<StudentApplication>> insertStudentApplicationCall = apiService.insertStudentApplication(studentApplication.name, studentApplication.age, studentApplication.gender, studentApplication.maritalStatus, studentApplication.height, studentApplication.iqTestResult, studentApplication.country, "picture_url", studentApplication.admissibilityScore);
+        Call<List<StudentApplication>> insertStudentApplicationCall = apiService.insertStudentApplication(studentApplication.name, studentApplication.age, studentApplication.gender, studentApplication.maritalStatus, studentApplication.height, studentApplication.iqTestResult, studentApplication.country, studentApplication.pictureUrl, studentApplication.admissibilityScore);
         insertStudentApplicationCall.enqueue(new Callback<List<StudentApplication>>() {
             @Override
             public void onResponse(Call<List<StudentApplication>> call, Response<List<StudentApplication>> response) {
