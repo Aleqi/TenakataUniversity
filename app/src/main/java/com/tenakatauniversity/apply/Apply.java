@@ -125,9 +125,10 @@ public class Apply extends Fragment {
         viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate -> {
             if (validate != null && validate) {
                 binding.applySubmitButton.setEnabled(false);
-                this.validateFields();
-                viewModel.resetValidateLiveData();
-                viewModel.submitData();
+                if (this.validateFields()) {
+                    viewModel.resetValidateLiveData();
+                    viewModel.submitData();
+                }
             }
         });
 
@@ -203,8 +204,8 @@ public class Apply extends Fragment {
                         //location is null, initialize location request
                         LocationRequest locationRequest = new LocationRequest()
                                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                .setInterval(10000)
-                                .setFastestInterval(2000)
+                                .setInterval(2000)
+                                .setFastestInterval(1000)
                                 .setNumUpdates(1);
                         //initialize location callback
                         LocationCallback locationCallback = new LocationCallback() {
@@ -341,6 +342,10 @@ public class Apply extends Fragment {
             binding.applySubmitButton.setEnabled(true);
             return false;
         }
+
+        //validate country
+        if (viewModel.getCountry(requireContext()) != null && !viewModel.getCountry(requireContext()).toLowerCase().equals("kenya"))
+            Snackbar.make(binding.coordinatorLayout, R.string.country_error, Snackbar.LENGTH_SHORT).show();
 
         return true;
     }
