@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Environment;
 import android.os.Looper;
@@ -122,6 +123,7 @@ public class Apply extends Fragment {
         requestLocationPermission();
         viewModel.getValidateFieldsLiveData().observe(getViewLifecycleOwner(), validate -> {
             if (validate != null && validate) {
+                binding.applySubmitButton.setEnabled(false);
                 this.validateFields();
                 viewModel.resetValidateLiveData();
                 viewModel.submitData();
@@ -141,7 +143,7 @@ public class Apply extends Fragment {
                     //initialize address list
                     List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     binding.countryValueTextView.setText(addressList.get(0).getCountryName());
-                    Timber.d("Country code: "+addressList.get(0).getCountryCode());
+                    Timber.d("Country code: " + addressList.get(0).getCountryCode());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -160,6 +162,18 @@ public class Apply extends Fragment {
                 String country = viewModel.getCountry(requireContext());
                 StudentApplication studentApplication = new StudentApplication(name, age, gender, maritalStatus, height, iqTestResults, country);
                 uploadImage(studentApplication);
+            }
+        });
+
+        viewModel.uploadResultLiveData.observe(getViewLifecycleOwner(), result -> {
+            if (result != null) {
+                if (result) {
+                    NavHostFragment.findNavController(this).popBackStack();
+                }
+                else {
+                    binding.applySubmitButton.setEnabled(true);
+                }
+                viewModel.resetUploadResultLiveData();
             }
         });
 
@@ -223,6 +237,7 @@ public class Apply extends Fragment {
         String name = binding.nameTextInputLayout.getEditText().getText().toString().trim();
         if (name == null || name.isEmpty()) {
             binding.nameTextInputLayout.setError(getString(R.string.name_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         } else {
             binding.nameTextInputLayout.setError("");
@@ -232,6 +247,7 @@ public class Apply extends Fragment {
         String ageString = binding.ageTextInputLayout.getEditText().getText().toString().trim();
         if (ageString == null || ageString.isEmpty()) {
             binding.ageTextInputLayout.setError(getString(R.string.age_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         } else {
             binding.ageTextInputLayout.setError("");
@@ -241,6 +257,7 @@ public class Apply extends Fragment {
             int age = Integer.parseInt(ageString);
             if (age <= 0) {
                 binding.ageTextInputLayout.setError(getString(R.string.age_invalid_error));
+                binding.applySubmitButton.setEnabled(true);
                 return false;
             } else {
                 binding.ageTextInputLayout.setError("");
@@ -248,18 +265,21 @@ public class Apply extends Fragment {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             binding.ageTextInputLayout.setError(getString(R.string.age_invalid_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         }
 
         // validate gender
         if (!binding.maleRadioButton.isChecked() && !binding.femaleRadioButton.isChecked()) {
             Snackbar.make(binding.coordinatorLayout, R.string.gender_error, Snackbar.LENGTH_SHORT).show();
+            binding.applySubmitButton.setEnabled(true);
             return false;
         }
 
         // validate marital status
         if (!binding.singleRadioButton.isChecked() && !binding.marriedRadioButton.isChecked()) {
             Snackbar.make(binding.coordinatorLayout, R.string.marital_status_error, Snackbar.LENGTH_SHORT).show();
+            binding.applySubmitButton.setEnabled(true);
             return false;
         }
 
@@ -267,6 +287,7 @@ public class Apply extends Fragment {
         String heightString = binding.heightTextInputLayout.getEditText().getText().toString().trim();
         if (heightString == null || heightString.isEmpty()) {
             binding.heightTextInputLayout.setError(getString(R.string.height_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         } else {
             binding.heightTextInputLayout.setError("");
@@ -275,6 +296,7 @@ public class Apply extends Fragment {
             int height = Integer.parseInt(heightString);
             if (height <= 0) {
                 binding.heightTextInputLayout.setError(getString(R.string.height_invalid_error));
+                binding.applySubmitButton.setEnabled(true);
                 return false;
             } else {
                 binding.heightTextInputLayout.setError("");
@@ -282,6 +304,7 @@ public class Apply extends Fragment {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             binding.heightTextInputLayout.setError(getString(R.string.height_invalid_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         }
 
@@ -289,6 +312,7 @@ public class Apply extends Fragment {
         String iqString = binding.iqTestResultsTextInputLayout.getEditText().getText().toString().trim();
         if (iqString == null || iqString.isEmpty()) {
             binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         } else {
             binding.iqTestResultsTextInputLayout.setError("");
@@ -297,6 +321,7 @@ public class Apply extends Fragment {
             int iqTestResults = Integer.parseInt(iqString);
             if (iqTestResults <= 100) {
                 binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_invalid_error));
+                binding.applySubmitButton.setEnabled(true);
                 return false;
             } else {
                 binding.iqTestResultsTextInputLayout.setError("");
@@ -304,6 +329,7 @@ public class Apply extends Fragment {
         } catch (NumberFormatException e) {
             e.printStackTrace();
             binding.iqTestResultsTextInputLayout.setError(getString(R.string.iq_test_results_invalid_error));
+            binding.applySubmitButton.setEnabled(true);
             return false;
         }
 
@@ -314,54 +340,10 @@ public class Apply extends Fragment {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             Intent.createChooser(takePictureIntent, getString(R.string.capture_your_profile_picture));
-//            startActivity(takePictureIntent);
             cameraIntentLauncher.launch(takePictureIntent);
         } catch (ActivityNotFoundException e) {
             // display error state to the user
         }
-    }
-
-    /*private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                // display error state to the user
-                Snackbar.make(binding.coordinatorLayout, R.string.camera_error, Snackbar.LENGTH_SHORT).show();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(requireContext(),
-                        "com.tenakatauniversity.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                //handle image capture result
-                Bundle extras = takePictureIntent.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                binding.pictureImageView.setImageBitmap(imageBitmap);
-            }
-        }
-    }*/
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     private void requestCameraPermission() {
@@ -421,7 +403,8 @@ public class Apply extends Fragment {
 
     public void uploadImage(StudentApplication studentApplication) {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference pictureRef = storageRef.child("pictures/picture.jpg");
+
+        StorageReference pictureRef = storageRef.child("pictures").child(System.currentTimeMillis() + "jpg");
         binding.pictureImageView.setDrawingCacheEnabled(true);
         binding.pictureImageView.buildDrawingCache();
         Bitmap bitmap = ((BitmapDrawable) binding.pictureImageView.getDrawable()).getBitmap();
@@ -435,8 +418,7 @@ public class Apply extends Fragment {
             Toast.makeText(requireContext(), "Image upload failure", Toast.LENGTH_SHORT).show();
         }).addOnSuccessListener(taskSnapshot -> {
             // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-            Toast.makeText(requireContext(), "Picture uploaded: "+storageRef.getDownloadUrl(), Toast.LENGTH_SHORT).show();
-            studentApplication.pictureUrl = storageRef.getDownloadUrl().toString();
+            studentApplication.pictureUrl = pictureRef.getDownloadUrl().toString();
             viewModel.insertStudentApplication(studentApplication);
         });
     }

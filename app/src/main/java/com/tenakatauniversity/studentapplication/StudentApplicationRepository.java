@@ -4,6 +4,7 @@ import android.app.Application;
 import android.appwidget.AppWidgetProvider;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.tenakatauniversity.database.AppDatabase;
 import com.tenakatauniversity.retrofit.ApiService;
@@ -39,7 +40,7 @@ public class StudentApplicationRepository {
         return studentApplicationsLiveData;
     }
 
-    public void insertStudentApplicationToRemoteServer(StudentApplication studentApplication) {
+    public void insertStudentApplicationToRemoteServer(StudentApplication studentApplication, MutableLiveData<Boolean> resultLiveData) {
         Call<List<StudentApplication>> insertStudentApplicationCall = apiService.insertStudentApplication(studentApplication.name, studentApplication.age, studentApplication.gender, studentApplication.maritalStatus, studentApplication.height, studentApplication.iqTestResult, studentApplication.country, studentApplication.pictureUrl, studentApplication.admissibilityScore);
         insertStudentApplicationCall.enqueue(new Callback<List<StudentApplication>>() {
             @Override
@@ -48,6 +49,7 @@ public class StudentApplicationRepository {
                     List<StudentApplication> studentApplications = response.body();
                     if (studentApplications != null) {
                         insert(studentApplications);
+                        resultLiveData.setValue(true);
                     }
                 } else {
                     try {

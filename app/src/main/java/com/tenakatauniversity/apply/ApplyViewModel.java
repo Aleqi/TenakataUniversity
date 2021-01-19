@@ -23,10 +23,12 @@ public class ApplyViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> validateFieldsLiveData;
     private MutableLiveData<Boolean> submitDataLiveData;
     private StudentApplicationRepository studentApplicationRepository;
+    public MutableLiveData<Boolean> uploadResultLiveData;
 
     public ApplyViewModel(Application application) {
         super(application);
         studentApplicationRepository = new StudentApplicationRepository(application);
+        uploadResultLiveData = new MutableLiveData<>();
     }
 
     public LiveData<Boolean> getSubmitDataLiveData() {
@@ -90,7 +92,11 @@ public class ApplyViewModel extends AndroidViewModel {
     }
 
     public void insertStudentApplication(StudentApplication studentApplication) {
-        studentApplicationRepository.insertStudentApplicationToRemoteServer(studentApplication);
+        studentApplicationRepository.insertStudentApplicationToRemoteServer(studentApplication, uploadResultLiveData);
+    }
+
+    public void resetUploadResultLiveData () {
+        uploadResultLiveData.setValue(null);
     }
 
 }
