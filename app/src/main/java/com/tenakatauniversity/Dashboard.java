@@ -34,14 +34,13 @@ public class Dashboard extends Fragment {
         mViewModel.getNavigateToApplyFragmentLiveData().observe(getViewLifecycleOwner(), result -> {
             if (result != null && result) {
                 NavHostFragment.findNavController(this).navigate(R.id.action_dashboard_to_apply);
-//                Navigation.findNavController(requireView()).navigate(R.id.action_dashboard_to_apply);
                 mViewModel.resetNavigateToApplyFragmentLiveData();
             }
         });
        //navigate to the admissions fragment when the admission results button is touched
         mViewModel.getNavigateToAdmissionResultsFragmentLiveData().observe(getViewLifecycleOwner(), result -> {
             if (result != null && result) {
-                Toast.makeText(requireContext(), "Navigate to admission results fragment", Toast.LENGTH_SHORT).show();
+                NavHostFragment.findNavController(this).navigate(R.id.action_dashboard_to_admissionList);
                 mViewModel.resetNavigateToAdmissionResultsFragmentLiveData();
             }
         });

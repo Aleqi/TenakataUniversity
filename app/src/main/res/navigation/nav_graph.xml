@@ -13,9 +13,17 @@
         <action
             android:id="@+id/action_dashboard_to_apply"
             app:destination="@id/apply" />
+        <action
+            android:id="@+id/action_dashboard_to_admissionList"
+            app:destination="@id/admissionList" />
     </fragment>
     <fragment
         android:id="@+id/apply"
         android:name="com.tenakatauniversity.apply.Apply"
         android:label="Apply" />
+    <fragment
+        android:id="@+id/admissionList"
+        android:name="com.tenakatauniversity.admissionlist.AdmissionList"
+        android:label="admission_list_fragment"
+        tools:layout="@layout/admission_list_fragment" />
 </navigation>

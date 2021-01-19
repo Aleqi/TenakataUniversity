@@ -49,9 +49,9 @@ public class StudentApplicationRepository {
                     if (studentApplications != null) {
                         insert(studentApplications);
                     }
-                }else {
+                } else {
                     try {
-                        Timber.d("insert failed: "+response.errorBody().string());
+                        Timber.d("insert failed: " + response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -60,7 +60,7 @@ public class StudentApplicationRepository {
 
             @Override
             public void onFailure(Call<List<StudentApplication>> call, Throwable t) {
-                Timber.d("insert failed: "+t.getMessage());
+                Timber.d("insert failed: " + t.getMessage());
             }
         });
 
@@ -74,6 +74,30 @@ public class StudentApplicationRepository {
                 studentApplicationDao.insert(studentApplication);
             });
         }
+    }
+
+    public void getRemoteStudentApplications() {
+        Call<List<StudentApplication>> call = apiService.getAllStudentApplications();
+        call.enqueue(new Callback<List<StudentApplication>>() {
+            @Override
+            public void onResponse(Call<List<StudentApplication>> call, Response<List<StudentApplication>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null)
+                        insert(response.body());
+                } else {
+                    try {
+                        Timber.d("fetch failed: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<StudentApplication>> call, Throwable t) {
+                Timber.d("insert failed: " + t.getMessage());
+            }
+        });
     }
 
 }
