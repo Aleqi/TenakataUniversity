@@ -12,7 +12,8 @@ import timber.log.Timber;
 
 public class RetrofitBuilder {
 
-    public static final String BASE_URL = "http://192.168.42.100/tenakatauniversity/public/api/"; //usb ethernet
+//    public static final String BASE_URL = "http://192.168.42.100/tenakatauniversity/public/api/"; //usb ethernet
+    public static final String BASE_URL = "http://tenakatauniversity.mkeja.com/public/api/";
 
     private final static OkHttpClient client = buildClient();
 

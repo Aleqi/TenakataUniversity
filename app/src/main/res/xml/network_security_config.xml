@@ -13,4 +13,9 @@
         <domain includeSubdomains="true">192.168.137.1</domain>
     </domain-config>
 
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">www.tenakatauniversity.mkeja.com</domain>
+    </domain-config>
+
+
 </network-security-config>
