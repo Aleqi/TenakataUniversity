@@ -33,10 +33,13 @@ public class AdmissionListAdapter extends RecyclerView.Adapter<AdmissionListAdap
 
     @Override
     public int getItemCount() {
-        return studentApplications.size();
+        if (studentApplications == null)
+            return 0;
+        else
+            return studentApplications.size();
     }
 
-    public void submitList (List<StudentApplication> studentApplications) {
+    public void submitList(List<StudentApplication> studentApplications) {
         this.studentApplications = studentApplications;
         notifyDataSetChanged();
     }

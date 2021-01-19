@@ -13,14 +13,17 @@ import java.util.List;
 
 public class AdmissionListViewModel extends AndroidViewModel {
 
-    private StudentApplicationRepository repository;
+    private final StudentApplicationRepository repository;
     LiveData<List<StudentApplication>> studentApplicationsLiveData;
 
     public AdmissionListViewModel(@NonNull Application application) {
         super(application);
         repository = new StudentApplicationRepository(application);
-        studentApplicationsLiveData = repository.getStudentApplicationsLiveData();
         repository.getRemoteStudentApplications();
+        studentApplicationsLiveData = repository.getStudentApplicationsLiveData();
     }
 
+    public void refresh() {
+        repository.getRemoteStudentApplications();
+    }
 }

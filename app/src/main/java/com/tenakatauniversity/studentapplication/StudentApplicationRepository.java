@@ -19,7 +19,7 @@ import timber.log.Timber;
 
 public class StudentApplicationRepository {
     private StudentApplicationDao studentApplicationDao;
-    private LiveData<List<StudentApplication>> studentApplicationsLiveData;
+    private final LiveData<List<StudentApplication>> studentApplicationsLiveData;
     private Application application;
     private ApiService apiService;
 

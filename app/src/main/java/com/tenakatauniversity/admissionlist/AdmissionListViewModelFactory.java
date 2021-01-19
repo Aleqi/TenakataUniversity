@@ -20,7 +20,7 @@ public class AdmissionListViewModelFactory extends ViewModelProvider.NewInstance
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass == ApplyViewModel.class) {
+        if (modelClass == AdmissionListViewModel.class) {
             return (T) new AdmissionListViewModel(application);
         }
         return null;

@@ -31,9 +31,11 @@ public class AdmissionList extends Fragment {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
         setupRecyclerViewAdapter();
+        binding.swipeRefreshLayout.setOnRefreshListener(()-> viewModel.refresh());
         viewModel.studentApplicationsLiveData.observe(getViewLifecycleOwner(), studentApplications -> {
             if (studentApplications != null) {
                 adapter.submitList(studentApplications);
+                binding.swipeRefreshLayout.setRefreshing(false);
             }
         });
         return binding.getRoot();
