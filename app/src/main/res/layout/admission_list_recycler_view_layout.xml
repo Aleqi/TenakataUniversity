@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="studentApplication"
+            type="com.tenakatauniversity.studentapplication.StudentApplication" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@{studentApplication.name}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="@string/name" />
+
+        <TextView
+            android:id="@+id/admissibility_score_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@{studentApplication.admissibilityScore}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="@string/admissibility_score" />
+
+    </LinearLayout>
+</layout>

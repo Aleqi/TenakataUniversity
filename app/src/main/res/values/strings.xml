@@ -36,4 +36,5 @@
     <string name="done">Done</string>
     <string name="location_permission_request">Location Permission Request</string>
     <string name="country">Country</string>
+    <string name="admissibility_score">Admissibility Score</string>
 </resources>
