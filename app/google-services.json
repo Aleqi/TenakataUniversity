@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "10859121940",
+    "project_id": "tenakata-university",
+    "storage_bucket": "tenakata-university.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10859121940:android:e90958ca724d7f0c37c601",
+        "android_client_info": {
+          "package_name": "com.tenakatauniversity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "10859121940-drm8rhqfkee6l9dgt2h2t1kv040mtuaj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChbc5stvc3YNx4oS36jc94vG0wsuM29Y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "10859121940-drm8rhqfkee6l9dgt2h2t1kv040mtuaj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
