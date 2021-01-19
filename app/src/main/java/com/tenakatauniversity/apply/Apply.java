@@ -95,13 +95,14 @@ public class Apply extends Fragment {
                 }
             });
 
+    private Bitmap imageBitmap;
     // Create this as a variable in your Fragment class
     ActivityResultLauncher<Intent> cameraIntentLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 //handle the result image
                 Bundle extras = result.getData().getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                imageBitmap = (Bitmap) extras.get("data");
                 if (imageBitmap != null) {
                     binding.pictureImageView.setImageBitmap(imageBitmap);
                 }
@@ -232,6 +233,14 @@ public class Apply extends Fragment {
      * Validate the application input fields
      */
     public boolean validateFields() {
+
+        //validate profile picture
+
+        if (imageBitmap == null) {
+            Snackbar.make(binding.coordinatorLayout, R.string.picture_error, Snackbar.LENGTH_SHORT).show();
+            binding.applySubmitButton.setEnabled(true);
+            return false;
+        }
 
         //validate name
         String name = binding.nameTextInputLayout.getEditText().getText().toString().trim();

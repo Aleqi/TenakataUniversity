@@ -38,4 +38,5 @@
     <string name="country">Country</string>
     <string name="admissibility_score">Admissibility Score</string>
     <string name="admission_list">Admission List</string>
+    <string name="picture_error">Picture is required</string>
 </resources>
