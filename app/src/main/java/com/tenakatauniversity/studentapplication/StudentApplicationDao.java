@@ -25,4 +25,6 @@ public interface StudentApplicationDao {
     @Delete
     void delete(StudentApplication studentApplication);
 
+    @Query("Delete From StudentApplication")
+    void deleteAll();
 }

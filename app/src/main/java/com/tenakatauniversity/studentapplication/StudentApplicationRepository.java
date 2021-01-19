@@ -69,7 +69,10 @@ public class StudentApplicationRepository {
     private void insert(List<StudentApplication> studentApplications) {
         for (StudentApplication studentApplication :
                 studentApplications) {
-            AppDatabase.databaseWriteExecutor.execute(() -> studentApplicationDao.insert(studentApplication));
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                studentApplicationDao.deleteAll();
+                studentApplicationDao.insert(studentApplication);
+            });
         }
     }
 
