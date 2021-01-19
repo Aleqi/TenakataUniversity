@@ -12,7 +12,7 @@ import com.tenakatauniversity.studentapplication.StudentApplicationDao;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {StudentApplication.class}, version = 1)
+@Database(entities = {StudentApplication.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract StudentApplicationDao studentApplicationDao();
@@ -27,6 +27,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), AppDatabase.class, "database")
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return INSTANCE;

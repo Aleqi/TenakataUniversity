@@ -68,10 +68,6 @@ public class ApplyViewModel extends AndroidViewModel {
         takePictureLiveData.setValue(null);
     }
 
-    public void insertStudentApplicationIntoViewModel(StudentApplication studentApplication) {
-
-    }
-
     public void submitData() {
         submitDataLiveData.setValue(true);
     }
@@ -94,7 +90,7 @@ public class ApplyViewModel extends AndroidViewModel {
     }
 
     public void insertStudentApplication(StudentApplication studentApplication) {
-        studentApplicationRepository.insert(studentApplication);
+        studentApplicationRepository.insertStudentApplicationToRemoteServer(studentApplication);
     }
 
 }

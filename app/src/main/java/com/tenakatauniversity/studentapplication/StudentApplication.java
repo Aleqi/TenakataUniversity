@@ -1,21 +1,33 @@
 package com.tenakatauniversity.studentapplication;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class StudentApplication {
     @PrimaryKey
+    @SerializedName("id")
     public int id;
+    @SerializedName("name")
     public String name;
+    @SerializedName("age")
     public int age;
+    @SerializedName("gender")
     public String gender;
+    @SerializedName("marital_status")
     public String maritalStatus;
+    @SerializedName("height")
     public double height;
+    @SerializedName("iq_test_results")
     public int iqTestResult;
+    @SerializedName("country")
     public String country;
+    @SerializedName("admissibilityScore")
     public double admissibilityScore;
+    @SerializedName("picture_url")
+    public String pictureUrl;
 
     /**
      * @param name
@@ -26,7 +38,7 @@ public class StudentApplication {
      * @param iqTestResult
      * @param country
      */
-    public StudentApplication (String name, int age, String gender, String maritalStatus, double height, int iqTestResult, String country) {
+    public StudentApplication(String name, int age, String gender, String maritalStatus, double height, int iqTestResult, String country) {
         this.name = name;
         this.age = age;
         this.gender = gender;
